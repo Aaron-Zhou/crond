@@ -1,0 +1,12 @@
+#!/bin/bash
+
+exec 2>&1
+set -e
+
+export TOKEN=$(<${1:-/run/secrets/kubernetes.io/serviceaccount/token})
+
+if [ -e /var/run/environment ]; then
+    export $(</var/run/environment)
+fi
+
+exec clean-jobs.py "${API_ENDPOINT}" "${NAMESPACE}"

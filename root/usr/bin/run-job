@@ -1,0 +1,22 @@
+#!/bin/bash
+
+exec 2>&1
+
+TOKEN=$(</run/secrets/kubernetes.io/serviceaccount/token)
+
+if [ -e /var/run/environment ]; then
+    export $(</var/run/environment)
+fi
+
+for job; do
+    jobpath="${JOBS_DIR:-/etc/jobs}/$job"
+
+    echo "[$(date)] Starting job: $jobpath"
+    echo
+
+    load-job "$jobpath" | curl -s \
+        -H "Authorization: Bearer $TOKEN" \
+        -H 'Content-type: application/json' \
+        --data-binary @- \
+        ${API_ENDPOINT}/apis/batch/v1/namespaces/${NAMESPACE}/jobs
+done

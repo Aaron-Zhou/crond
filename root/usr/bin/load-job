@@ -1,0 +1,23 @@
+#!/usr/bin/env python2.7
+
+import sys
+import json, yaml
+
+obj, dump = None, None
+
+with open(sys.argv[1]) or sys.stdin as f:
+
+    try:
+        obj = yaml.load(f)
+    except:
+        obj = json.load(f)
+
+if 'metadata' not in obj:
+    obj['metadata'] = {}
+
+if 'annotations' not in obj['metadata']:
+    obj['metadata']['annotations'] = {}
+
+obj['metadata']['annotations']['getup.io/created-by'] = 'crond-job'
+
+json.dump(obj, sys.stdout)

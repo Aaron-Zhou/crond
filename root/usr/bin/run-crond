@@ -1,0 +1,28 @@
+#!/bin/bash
+
+exec 2>&1
+
+env | sort > /var/run/environment
+
+USER_ID=$(id -u)
+GROUP_ID=$(id -g)
+
+{
+    cat /etc/passwd
+    echo "cron:x:${USER_ID}:${GROUP_ID}:Openshift Cron User:${HOME}:/sbin/nologin"
+} > /tmp/passwd
+
+export LD_PRELOAD=libnss_wrapper.so:libuid_wrapper.so:$LD_PRELOAD
+export NSS_WRAPPER_PASSWD=/tmp/passwd
+export NSS_WRAPPER_GROUP=/etc/group
+export UID_WRAPPER=${UID_WRAPPER:-1}
+export UID_WRAPPER_ROOT=${UID_WRAPPER_ROOT:-1}
+
+if [ -d /config/ ]; then
+    echo '--> Copying config files:'
+    cp -rvL /config/* /etc/
+    echo
+fi
+
+echo "--> Starting crond"
+exec crond -n -m off -P -p -x load,sch
