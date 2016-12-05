@@ -28,6 +28,9 @@ parameters:
 
 - name: JOB_IMAGE_NAMESPACE
   displayName: "Namespace of the image where to run the Job"
+  description: |-
+    This is the project/namespace name of the location for the dcker image.
+    Usually it is the same name of the current namespace
   required: true
 
 - name: JOB_IMAGE_NAME
@@ -37,11 +40,6 @@ parameters:
 - name: JOB_IMAGE_TAG
   displayName: "Image tag"
   value: latest
-
-- name: JOBS_DIR
-  displayName: "Jobs Dir"
-  description: "Where to mount job template files"
-  value: /etc/jobs
 
 objects:
 
@@ -111,7 +109,7 @@ objects:
               - name: COMMAND
                 value: "${COMMAND}"
               - name: JOBS_DIR
-                value: "${JOBS_DIR}"
+                value: "/etc/jobs/"
               name: job
               image: ${DOCKER_REGISTRY}${JOB_IMAGE_NAMESPACE}/${JOB_IMAGE_NAME}:${JOB_IMAGE_TAG}
               command: ["/bin/bash", "-c", "$(COMMAND)"]
@@ -173,7 +171,7 @@ objects:
           terminationMessagePath: /dev/termination-log
           volumeMounts:
           - name: volume-jobs
-            mountPath: ${JOBS_DIR}
+            mountPath: /etc/jobs
           - name: volume-config
             mountPath: /config
         dnsPolicy: ClusterFirst
