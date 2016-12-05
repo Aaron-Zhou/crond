@@ -19,6 +19,7 @@ Create the ImageStream in your project and import it:
 
 Now, let's create a cron application named `cron`:
 
+    ## Change "myproj" and "app" for the name of the project and image you want to execute the job in
     $ oc process -f template.yaml -v NAME=cron,JOB_IMAGE_NAMESPACE=myproj,JOB_IMAGE_NAME=app | oc create -f -
 
 Valid parameters are:
