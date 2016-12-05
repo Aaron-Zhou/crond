@@ -77,7 +77,10 @@ objects:
       metadata:
         generateName: ${NAME}-${JOB_IMAGE_NAME}-
         labels:
-          app: ${NAME}-${JOB_IMAGE_NAME} spec:
+          app: ${NAME}-${JOB_IMAGE_NAME}
+      spec:
+        apiVersion: v1
+        kind: Pod
         metadata:
           labels:
             job: ${NAME}-${JOB_IMAGE_NAME}
