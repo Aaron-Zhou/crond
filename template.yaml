@@ -29,7 +29,7 @@ parameters:
 - name: JOB_IMAGE_NAMESPACE
   displayName: "Namespace of the image where to run the Job"
   description: |-
-    This is the project/namespace name of the location for the dcker image.
+    The project/namespace of the location for the docker image.
     Usually it is the same name of the current namespace
   required: true
 
