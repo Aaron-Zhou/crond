@@ -17,6 +17,10 @@ Create the ImageStream in your project and import it:
     $ oc create -f imagestream.yaml
     $ oc import-image crond
 
+Give permission to create Job objects to service account `cron`:
+
+    $ oc policy add-role-to-user admin -z cron
+
 Now, let's create a cron application named `cron`:
 
     ## Change "myproj" and "app" for the name of the project and image you want to execute the job in

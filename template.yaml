@@ -44,6 +44,11 @@ parameters:
 objects:
 
 - apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: cron
+
+- apiVersion: v1
   kind: ConfigMap
   metadata:
     name: ${NAME}-config
@@ -152,6 +157,7 @@ objects:
           app: ${NAME}
           deploymentconfig: ${NAME}
       spec:
+        serviceAccount: cron
         containers:
         - env:
           - name: PATH
