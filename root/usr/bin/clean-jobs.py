@@ -68,7 +68,7 @@ def list_pods_for_job(job):
             api=api_endpoint,
             namespace=namespace)
         labelSelector = ','.join([ '{}={}'.format(k,v) for k,v in matchLabels.items() ])
-        res = get(url, params={'labelSelector': labelSelector}, headers=headers)
+        res = get(url, params={'labelSelector': labelSelector}, headers=headers, verify=False)
         if res.ok:
             data = res.json()
             for pod in data['items']:
@@ -79,11 +79,11 @@ def delete_job(job):
     print('Deleting job', job['metadata']['name'])
     for pod in list_pods_for_job(job):
         print('  -> Pod', pod['metadata']['selfLink'])
-        delete(url(pod), headers=headers)
+        delete(url(pod), headers=headers, verify=False)
     print('  -> Job', job['metadata']['name'])
-    delete(url(job), headers=headers)
+    delete(url(job), headers=headers, verify=False)
 
-res = get(jobs_url, headers=headers)
+res = get(jobs_url, headers=headers, verify=False)
 if not res.ok:
     print(res.status, res.reason)
     print(res.text)

@@ -9,14 +9,15 @@ if [ -e /var/run/environment ]; then
 fi
 
 for job; do
-    jobpath="${JOBS_DIR:-/etc/jobs}/$job"
+    jobpath="${JOBS_DIR:-/etc/jobs}/${job}"
 
     echo "[$(date)] Starting job: $jobpath"
     echo
 
-    load-job "$jobpath" | curl -s \
-        -H "Authorization: Bearer $TOKEN" \
+    load-job "${jobpath}" | curl -s \
+        -H "Authorization: Bearer ${TOKEN}" \
         -H 'Content-type: application/json' \
+        --insecure \
         --data-binary @- \
         ${API_ENDPOINT}/apis/batch/v1/namespaces/${NAMESPACE}/jobs
 done
