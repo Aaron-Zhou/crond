@@ -160,6 +160,9 @@ objects:
                 valueFrom:
                   fieldRef:
                     fieldPath: metadata.namespace
+              ##
+              ## Insert below the credentials to your object storage
+              ##
 
               ## Azure Blob Storage Cerdentials
               #- name: AZURE_ACCOUNT_NAME
