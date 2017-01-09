@@ -180,7 +180,7 @@ objects:
               #  value: ""
 
               name: job
-              image: getupcloud/backup:v2.8
+              image: getupcloud/backup:latest
             restartPolicy: Never
 
 - apiVersion: v1
