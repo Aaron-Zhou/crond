@@ -67,7 +67,7 @@ objects:
       # |  |  |  |  |
       # *  *  *  *  * user-name  command to be executed
 
-      # cleanup jobsolder than 1h every 5 minutes
+      # cleanup jobs older than 1h every 5 minutes
       */5  *  *  *  * cron clean-jobs &> /var/log/clean-jobs.log
 
       # run user-defined job
