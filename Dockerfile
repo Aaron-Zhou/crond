@@ -9,8 +9,9 @@ LABEL io.k8s.description="Crond image" \
       io.k8s.display-name="Cron 1.0" \
       io.openshift.tags="cron,cron1"
 
-RUN INSTALL_PKGS="cronie crontabs nss_wrapper uid_wrapper PyYAML python-requests python-dateutil" && \
-    yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
+RUN yum install -y --enablerepo=centosplus epel-release && \
+    INSTALL_PKGS="cronie crontabs nss_wrapper uid_wrapper PyYAML python-requests python-dateutil" && \
+    yum install -y --setopt=tsflags=nodocs --enablerepo=centosplus $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
     yum clean all -y
 
