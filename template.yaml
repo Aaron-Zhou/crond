@@ -73,9 +73,6 @@ objects:
       # run user-defined job
       ${CRON_SCHEDULE} cron run-job default &> /var/log/run-job.log
 
-      # dump all databases everyday at 6AM
-      #0 6 * * * cron run-job dump-database &> /var/log/dump-database.log
-
       # EOF
 
 
@@ -130,64 +127,7 @@ objects:
               image: ${DOCKER_REGISTRY}${JOB_IMAGE_NAMESPACE}/${JOB_IMAGE_NAME}:${JOB_IMAGE_TAG}
               command: ["/bin/bash", "-c", "$(COMMAND)"]
             restartPolicy: Never
-    dump-database: |-
-      apiVersion: batch/v1
-      kind: Job
-      metadata:
-        generateName: dump-database-${NAME}-
-        labels:
-          app: ${NAME}
-      spec:
-        apiVersion: v1
-        kind: Pod
-        metadata:
-          labels:
-            job: dump-database-${NAME}-${JOB_IMAGE_NAME}
-        parallelism: 1 # how many pods running in parallel should execute a job
-        completions: 1 # how many successful pod completions are needed to finish a job
-        activeDeadlineSeconds: 86400 # job timeout in seconds
-        template:
-          metadata:
-              labels:
-                job: dump-database-${NAME}-${JOB_IMAGE_NAME}
-          spec:
-            serviceAccount: cron
-            containers:
-            - env:
-              - name: PATH
-                value: "/opt/app-root/src/bin:/opt/app-root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-              - name: NAMESPACE
-                valueFrom:
-                  fieldRef:
-                    fieldPath: metadata.namespace
-              - name: LABEL_SELECTOR
-                value: dump-database=true
 
-              ##
-              ## Insert below the credentials to your object storage
-              ##
-
-              ## Azure Blob Storage Cerdentials
-              #- name: AZURE_ACCOUNT_NAME
-              #  value: ""
-              #- name: AZURE_ACCOUNT_KEY
-              #  value: ""
-              #- name: AZURE_CONTAINER
-              #  value: ""
-
-              ## AWS S3 Credentials
-              #- name: AWS_ACCESS_KEY_ID
-              #  value: ""
-              #- name: AWS_SECRET_ACCESS_KEY
-              #  value: ""
-              #- name: AWS_REGION
-              #  value: ""
-              #- name: AWS_S3_BUCKET_NAME
-              #  value: ""
-
-              name: job
-              image: getupcloud/backup:latest
-            restartPolicy: Never
 
 - apiVersion: v1
   kind: DeploymentConfig
@@ -231,7 +171,7 @@ objects:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
-          image: caruccio/crond:latest
+          image: getupcloud/crond:latest
           imagePullPolicy: Always
           name: crond
           resources:
