@@ -11,7 +11,7 @@ if len(sys.argv) not in [3, 4]:
     print('Usage: {} api-endpoint namespace [auth-token]'.format(sys.argv[0]))
     sys.exit(1)
 
-api_endpoint = sys.argv[1] or os.environ.get('API_ENDPOINT')
+api_endpoint = sys.argv[1] or os.environ.get('API_ENDPOINT').rstrip('/')
 assert api_endpoint, 'Missing parameter: api-endpoint'
 
 namespace = sys.argv[2] or os.environ.get('NAMESPACE')
@@ -20,7 +20,7 @@ assert namespace, 'Missing parameter: namespace'
 token = sys.argv[3] if len(sys.argv) > 3 else os.environ.get('TOKEN')
 assert token, 'Missing parameter: auth-token'
 
-ttl = int(os.environ['COMPLETION_LIMIT']) if 'COMPLETION_LIMIT' in os.environ else (60 * 60)
+ttl = int(os.environ['COMPLETION_LIMIT']) if 'COMPLETION_LIMIT' in os.environ else (60 * 60 * 24)
 
 m, s = divmod(ttl, 60)
 h, m = divmod(m, 60)
@@ -37,7 +37,7 @@ jobs_url = '{api}/apis/batch/v1/namespaces/{namespace}/jobs'.format(
     namespace=namespace)
 
 def url(obj):
-    return '{}/{}'.format(api_endpoint, obj['metadata']['selfLink'])
+    return '{}/{}'.format(api_endpoint, obj['metadata']['selfLink'].lstrip('/'))
 
 def filter_valid_jobs(jobs):
     for job in jobs:
@@ -79,9 +79,13 @@ def delete_job(job):
     print('Deleting job', job['metadata']['name'])
     for pod in list_pods_for_job(job):
         print('  -> Pod', pod['metadata']['selfLink'])
-        delete(url(pod), headers=headers, verify=False)
+        res = delete(url(pod), headers=headers, verify=False)
+        if not res.ok:
+            print('Error deleting pod:', res)
     print('  -> Job', job['metadata']['name'])
-    delete(url(job), headers=headers, verify=False)
+    res = delete(url(job), headers=headers, verify=False)
+    if not res.ok:
+        print('Error deleting job:', res)
 
 res = get(jobs_url, headers=headers, verify=False)
 if not res.ok:
