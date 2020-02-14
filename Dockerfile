@@ -2,8 +2,8 @@ FROM openshift/base-centos7
 
 MAINTAINER Mateus Caruccio <mateus.caruccio@getupcloud.com>
 
-ENV CRON_VERSION 1.0 \
-    HOME /opt/app-root/src
+ENV CRON_VERSION=1.0 \
+    HOME=/opt/app-root/src
 
 LABEL io.k8s.description="Crond image" \
       io.k8s.display-name="Cron 1.0" \
